@@ -37,14 +37,6 @@ object DeltaMetaExample {
       .execute()
     println(s"Managed table $tableName creation/check complete.")
 
-    // Verify path-based Delta table exists
-    println(s"\nChecking Delta table at path: $deltaPath")
-    if (DeltaTable.isDeltaTable(spark, deltaPath)) {
-      println(s"Delta table at $deltaPath exists and schema is verified.")
-    } else {
-      println(s"Path $deltaPath is not recognized as a Delta table!")
-    }
-
     // Create sample data and write to Delta table (idempotent overwrite)
     val sampleData = Seq(
       (1, "John", "A.", "Doe", "M", "1980-01-01 00:00:00", "123-45-6789", 100000),
