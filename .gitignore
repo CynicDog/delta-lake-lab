@@ -1,0 +1,12 @@
+# Ignore build artifacts and temporary files
+target/
+spark-warehouse/
+project/
+
+# Optional: ignore IntelliJ or IDE metadata
+.idea/
+*.iml
+
+# Ignore OS-specific files
+.DS_Store
+
