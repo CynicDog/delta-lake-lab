@@ -1,4 +1,4 @@
-# Delta Lake Lab - Quickstart (Docker & Colab)
+# Data Engineering Lab 
 
 - Table of Contents 
   * [Environment Versions](#environment-versions)
