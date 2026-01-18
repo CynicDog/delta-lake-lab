@@ -21,14 +21,14 @@ deltaTablePeople.alias('people') \
         , "people.salary"      : "updates.salary"
     }) \
     .whenNotMatchedInsert(values = {
-          "people.id": "updates.id"
-        , "people.firstName": "updates.firstName"
-        , "people.middleName": "updates.middleName"
-        , "people.lastName": "updates.lastName"
-        , "people.gender": "updates.gender"
-        , "people.birthDate": "updates.birthDate"
-        , "people.ssn": "updates.ssn"
-        , "people.salary": "updates.salary"
+          "people.id"           : "updates.id"
+        , "people.firstName"    : "updates.firstName"
+        , "people.middleName"   : "updates.middleName"
+        , "people.lastName"     : "updates.lastName"
+        , "people.gender"       : "updates.gender"
+        , "people.birthDate"    : "updates.birthDate"
+        , "people.ssn"          : "updates.ssn"
+        , "people.salary"       : "updates.salary"
     }) \
     .execute()
 
