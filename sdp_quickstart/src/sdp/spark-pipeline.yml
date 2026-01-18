@@ -1,0 +1,5 @@
+name: sdp
+storage: file:///app/sdp/checkpoints
+libraries:
+  - glob:
+      include: transformations/**

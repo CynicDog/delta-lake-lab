@@ -1,0 +1,80 @@
+services:
+  spark:
+    image: spark:sdp
+    container_name: spark_sdp
+    user: root
+    ports:
+      - "4040:4040"
+    environment:
+      - SPARK_CONF_DIR=/opt/spark/conf
+      - SPARK_HOME=/opt/spark
+      - SPARK_SUBMIT_OPTS=-Dspark.eventLog.enabled=true -Dspark.eventLog.dir=file:///app/sdp/metadata/logs
+    volumes:
+      - raw-volume:/app/sdp/pipeline-storage
+      - spark-metadata:/app/sdp/metadata
+      - ./src:/app
+    healthcheck:
+      test: ["CMD", "ls", "/app/sdp/pipeline-storage"]
+      interval: 5s
+    command: >
+      bash -c "
+        # 0. Create metadata subdirectories
+        mkdir -p /app/sdp/metadata/logs /app/sdp/metadata/checkpoints
+        chmod -R 777 /app/sdp/metadata
+      
+        # 1. Move to the app directory
+        cd /app && 
+      
+        # 2. Initialize spark declarative pipeline project idempotently
+        if [ ! -f sdp/pipeline.yml ]; then
+          echo 'Initializing pipeline...'
+          # We run init in a temp folder to avoid the 'Directory exists' error,
+          # then move only the configuration files into /app/sdp
+          mkdir -p /tmp/init_sdp && cd /tmp/init_sdp
+          spark-pipelines init --name sdp
+      
+          # Move everything EXCEPT the storage directory (the mount point)
+          cp -rn sdp/* /app/sdp/ 2>/dev/null || true
+          cd /app
+        fi &&
+
+        # 3. Keep the container alive
+        echo 'Spark SDP is ready.' &&
+        tail -f /dev/null
+      "
+
+  history-server:
+    image: spark:sdp
+    container_name: spark_history
+    user: root
+    ports:
+      - "18080:18080"
+    volumes:
+      - spark-metadata:/app/sdp/metadata
+    environment:
+      - SPARK_HISTORY_OPTS=-Dspark.history.fs.logDirectory=file:///app/sdp/metadata/logs -Dspark.history.fs.update.interval=10s
+    command: >
+      bash -c "
+        until [ -d /app/sdp/metadata/logs ]; do
+          echo 'Waiting for logs directory...'
+          sleep 2
+        done
+        /opt/spark/bin/spark-class org.apache.spark.deploy.history.HistoryServer
+      "
+
+  ingestion:
+    image: ghcr.io/cynicdog/uptown-downtown/ingestion:latest
+    container_name: mta_ingestion
+    volumes:
+      - raw-volume:/data/raw
+    environment:
+      - RAW_BASE_PATH=/data/raw
+      - POLL_INTERVAL_SECONDS=30
+    restart: on-failure
+    depends_on:
+      spark:
+        condition: service_healthy
+
+volumes:
+  raw-volume:
+  spark-metadata:
