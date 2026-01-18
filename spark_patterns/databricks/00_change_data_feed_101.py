@@ -1,6 +1,19 @@
 # Reference
 #   - https://docs.databricks.com/aws/en/delta/delta-change-data-feed
 
+# ```sql
+# -- Enable change data feed on a new table
+# CREATE TABLE student (id INT, name STRING, age INT)
+#     TBLPROPERTIES (delta.enableChangeDataFeed = true)
+#
+# -- Enable change data feed on an existing table
+# ALTER TABLE STUDENT
+#     SET TBLPROPERTIES (delta.enableChangeDataFeed = true)
+#
+# -- All new tables in a Spark session
+# SET spark.databricks.delta.properties.defaults.enableChangeDataFeed = true;
+# ```
+
 from pyspark.sql import functions as F
 
 # Read the change data feed as a stream.
