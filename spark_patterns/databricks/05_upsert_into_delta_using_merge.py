@@ -6,19 +6,19 @@ from delta.tables import *
 deltaTablePeople = DeltaTable.forName(spark, "people10m")
 
 deltaTablePeopleUpdates = DelatTable.forName(spark, "people10mUpdates")
-dfUpdates = deltaTablePeopleUpdates.toDF( )
+dfUpdates = deltaTablePeopleUpdates.toDF()
 
 deltaTablePeople.alias('people') \
     .merge(dfUpdates.alias('updates'), 'people.id = updates.id') \
     .whenMatchedUpdate(set = {
-          "people.id"          : "updates.id"
-        , "people.firstName"   : "updates.firstName"
-        , "people.middleName"  : "updates.middleName"
-        , "people.lastName"    : "updates.lastName"
-        , "people.gender"      : "updates.gender"
-        , "people.birthDate"   : "updates.birthDate"
-        , "people.ssn"         : "updates.ssn"
-        , "people.salary"      : "updates.salary"
+          "people.id"           : "updates.id"
+        , "people.firstName"    : "updates.firstName"
+        , "people.middleName"   : "updates.middleName"
+        , "people.lastName"     : "updates.lastName"
+        , "people.gender"       : "updates.gender"
+        , "people.birthDate"    : "updates.birthDate"
+        , "people.ssn"          : "updates.ssn"
+        , "people.salary"       : "updates.salary"
     }) \
     .whenNotMatchedInsert(values = {
           "people.id"           : "updates.id"
