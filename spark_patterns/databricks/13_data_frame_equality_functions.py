@@ -36,6 +36,8 @@ schema_actual = "name STRING, amount DOUBLE"
 df_expected = spark.createDataFrame(data = data_expected)
 df_actual = spark.createDataFrame(data = data_actual, schema = schema_actual)
 
+assertSchemaEqual(df_actual.schema, df_expected.schema)
+
 # Structured output for debugging differences in PySpark DataFrames
 from pyspark.errors import PySparkAssertionError
 try:
